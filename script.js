@@ -1,29 +1,23 @@
-//your code here
-const list = document.getElementById("list")
-const prevBtn = document.getElementById("load_prev")
-const nextBtn = document.getElementById("load_next")
-let pageNumberHere = 1;
-
-const fetchList = async (pageNumberHere) =>{
-	const res = await fetch(`https://api.github.com/repositories/1296269/issues?page=${pageNumberHere}&per_page=5`
-);
-	const data = await res.json();
-	data.map(item => {
-		list.innerHTML += `<li>${item.title}</li>`
-	})
-}
-fetchList(pageNumberHere);
-
-prevBtn.addEventListener("click", () =>{
-	pageNumberHere = pageNumberHere - 1;
-	if(pageNumberHere < 0){
-		pageNumberHere = 0;
-	}
-	list.innerHTML = '';
-	fetchList(pageNumberHere);
-})
-nextBtn.addEventListener("click", () =>{
-	pageNumberHere= pageNumberHere + 1;
-	list.innerHTML = '';
-	fetchList(pageNumberHere);
-})
+let i=1
+  async function fetchByPage (){
+  const cont = document.getElementById('issue_container')
+  const pi = document.getElementById('page_indicator')
+  pi.innerText = `Page number ${i}`
+  const rawData = await fetch(`https://api.github.com/repositories/1296269/issues?page=${i}&per_page=5`)
+  const parsedData = await rawData.json()
+  let store =''
+  parsedData.forEach(issue => {
+  store += `<li>${issue.title}</li>`
+  });
+  cont.innerHTML = store
+  }
+  fetchByPage(i)
+  function loadNext(){
+  i++;
+  fetchByPage()
+  }
+  function loadPrev(){
+  if(i === 1) return;
+  i--;
+  fetchByPage()
+  }
