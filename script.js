@@ -6,15 +6,16 @@ let i=1
   const rawData = await fetch(`https://api.github.com/repositories/1296269/issues?page=${i}&per_page=5`)
   const parsedData = await rawData.json()
   let store =''
-	  const s = new Set();
+	  // const s = new Set();
   parsedData.forEach(issue => {
-	  s.add(issue.title);
+	  // s.add(issue.title);
+	  store += `<li>${issue.title}</li>`
   });
 
-	s.forEach(item =>{
-		
-  store += `<li>${item}</li>`
-	})
+	// s.forEach(item =>{
+	// 	store += `<li>${item}</li>`
+	// })
+	  
   cont.innerHTML = store
   }
   fetchByPage(i)
