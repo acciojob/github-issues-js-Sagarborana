@@ -1,30 +1,45 @@
-let i=1
-  async function fetchByPage (){
-  const cont = document.getElementById('issue_container')
-  const pi = document.getElementById('page_indicator')
-  pi.innerText = `Page number ${i}`
-  const rawData = await fetch(`https://api.github.com/repositories/1296269/issues?page=${i}&per_page=5`)
-  const parsedData = await rawData.json()
-  let store =''
-	  // const s = new Set();
-  parsedData.forEach(issue => {
-	  // s.add(issue.title);
-	  store += `<li>${issue.title}</li>`
-  });
+let nextButton = document.querySelector("#load_next");
+let previousButton = document.querySelector("#load_prev");
+let pageNumber = document.querySelector("#page-number");
+let ol = document.querySelector("ol");
 
-	// s.forEach(item =>{
-	// 	store += `<li>${item}</li>`
-	// })
-	  
-  cont.innerHTML = store
+nextButton.addEventListener("click", handleClick);
+previousButton.addEventListener("click", handleClick);
+
+async function handleClick(event) {
+  let action = event.target.innerText;
+  let currentCount = Number(pageNumber.innerText);
+
+  if (action == "Next Page") {
+    // increment page
+    pageNumber.innerText = currentCount + 1;
+    const issues = await getGithubIssuesTitle(currentCount + 1);
+    renderLists(issues);
+  } else if (action == "Previous Page" && currentCount != 1) {
+    // decrease page
+    pageNumber.innerText = currentCount - 1;
+    const issues = await getGithubIssuesTitle(currentCount - 1);
+    renderLists(issues);
   }
-  fetchByPage(i)
-  function loadNext(){
-  i++;
-  fetchByPage()
+}
+
+function renderLists(issues) {
+  ol.innerText = "";
+  for (let issueName of issues) {
+    let li = document.createElement("li");
+    li.innerText = issueName;
+    ol.append(li);
   }
-  function loadPrev(){
-  if(i === 1) return;
-  i--;
-  fetchByPage()
-  }
+}
+async function getGithubIssuesTitle(pageNum = 1) {
+  const response = await fetch(
+    `https://api.github.com/repositories/1296269/issues?page=${pageNum}&per_page=5`
+  );
+
+  const result = await response.json();
+  return result.map((obj) => obj.title);
+}
+
+// on page load
+getGithubIssuesTitle().then((data) => renderLists(data));
+        
