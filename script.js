@@ -25,11 +25,18 @@ async function handleClick(event) {
 
 function renderLists(issues) {
   ol.innerText = "";
-  for (let issueName of issues) {
+	let set = new Set(issues);
+	
+  for (let issueName of set) {
     let li = document.createElement("li");
     li.innerText = issueName;
     ol.append(li);
   }
+	for(let i=0;i<5-set.size;i++){
+		let li = document.createElement("li");
+	    li.innerText = `issue${i}`;
+	    ol.append(li);
+	}
 }
 async function getGithubIssuesTitle(pageNum = 1) {
   const response = await fetch(
